@@ -21,13 +21,7 @@ if __name__ == "__main__":
     card_holder_book = holder_pb2.CardHolderBook()
     # Add an address.
     
-    f = open("records.txt", "ab")
-    for x in range(1):
-        a = write_card_holder.PromptForAddress(card_holder_book.card_holders.add())
-        # f.write(a.SerializeToString().decode())
-        f.write(a.SerializeToString())
+    f = open("records.txt", "wb")
+    a = write_card_holder.PromptForAddress(card_holder_book.card_holders.add())
+    f.write(a.SerializeToString())
     f.close()
-    # Write the new address book back to disk.
-    # f = open(sys.argv[1], "wb")
-    # f.write(card_holder_book.SerializeToString())
-    # f.close()
