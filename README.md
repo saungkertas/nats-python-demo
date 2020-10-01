@@ -30,6 +30,7 @@ pip3 install nats-python
 pip3 install asyncio-nats-client
 pip3 install google-cloud-pubsub
 pip3 install google-cloud-bigquery
+pip3 install faker
 
 wget https://dl.influxdata.com/influxdb/releases/influxdb_1.8.2_amd64.deb
 sudo dpkg -i influxdb_1.8.2_amd64.deb
