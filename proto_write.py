@@ -6,15 +6,15 @@ from faker import Faker
 
 class WriteCardHolder:
     # This function fills in a Person message based on user input.
-    def PromptForAddress(self,card_holders):
+    def PromptForAddress(self,card_holder):
         fake = Faker()
-        card_holders.name = fake.name()
-        card_holders.job = fake.job()
-        card_holders.phone_number = fake.phone_number()
-        card_holders.address = fake.address()
-        card_holders.card_number = fake.credit_card_number()
-        card_holders.card_provider = fake.credit_card_provider()
-        return card_holders
+        card_holder.name = fake.name()
+        card_holder.job = fake.job()
+        card_holder.phone_number = fake.phone_number()
+        card_holder.address = fake.address()
+        card_holder.card_number = fake.credit_card_number()
+        card_holder.card_provider = fake.credit_card_provider()
+        return card_holder
 
 if __name__ == "__main__":
     write_card_holder = WriteCardHolder()
@@ -22,6 +22,6 @@ if __name__ == "__main__":
     # Add an address.
     
     f = open("records.txt", "wb")
-    a = write_card_holder.PromptForAddress(card_holder_book.card_holders.add())
+    a = write_card_holder.PromptForAddress(card_holder_book)
     f.write(a.SerializeToString())
     f.close()   
