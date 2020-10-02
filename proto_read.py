@@ -20,7 +20,6 @@ if __name__ == "__main__":
     read_card_holder = ReadCardHolder()
     f = open("records.txt", "rb")
     a = f.read()
-    print(a)
     read_card_holder.card_holder.ParseFromString(a)
     read_card_holder.ListPeople()
     print('============')
@@ -28,6 +27,5 @@ if __name__ == "__main__":
     a = f.read()
     b = a.split(b';')
     for c in b:
-        print(c)
         read_card_holder.card_holder.ParseFromString(c)
         read_card_holder.ListPeople()
