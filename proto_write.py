@@ -24,4 +24,4 @@ if __name__ == "__main__":
     f = open("records.txt", "wb")
     a = write_card_holder.PromptForAddress(card_holder_book.card_holders.add())
     f.write(a.SerializeToString())
-    f.close()
+    f.close()   
