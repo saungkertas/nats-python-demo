@@ -10,7 +10,3 @@ message CardHolder {
   required string card_number = 5;
   required string card_provider = 6;
 }
-
-message CardHolderBook {
-  repeated CardHolder card_holders = 1;
-}

@@ -18,7 +18,7 @@ class WriteCardHolder:
 
 class ReadCardHolder:
     def __init__(self):
-        self.card_holder = holder_pb2.CardHolder()
+        self.card_holder = Holder.CardHolder()
 
     def ListPeople(self):
         print("Name:", card_holder.name)
