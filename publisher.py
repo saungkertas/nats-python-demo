@@ -4,7 +4,6 @@ import os
 import signal
 import json
 import holder_pb2
-from proto_write import WriteCardHolder
 from nats.aio.client import Client as NATS
 
 def show_usage():
@@ -67,11 +66,11 @@ async def run(loop):
     #     for id, line in enumerate(fp):  
     #         await nc.publish(args.subject, line.encode())
 
-    write_card_holder = WriteCardHolder()
-    card_holder_book = holder_pb2.CardHolder()
-    for x in range(1):
-        a = write_card_holder.PromptForAddress(card_holder_book.card_holders.add())
-        await nc.publish(args.subject, a.SerializeToString())
+    f = open("records2.txt", "rb")
+    a = f.read()
+    b = a.split(b';')
+    for c in b:
+        await nc.publish(args.subject, c)
     await nc.flush()
     await nc.close()
 

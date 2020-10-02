@@ -33,8 +33,8 @@ async def run(loop):
         read_card_holder = ReadCardHolder()
         #print(data)
         # a = bListPeople'\n\x9b\x01\n\x0fNicholas Rivera\x12\x17Clinical cytogeneticist\x1a\n7523889213"409558 Brooks Fields Suite 354\nJasonchester, TX 39801*\x1035243937086347792\x1bDiners Club / Carte Blanche'
-        read_card_holder.card_holder_book.ParseFromString(data)
-        print(read_card_holder.ListPeople())
+        read_card_holder.card_holder.ParseFromString(data)
+        read_card_holder.ListPeople()
         #print(data)
         # print("Received a message on '{subject} {reply}': {data}".format(
             # subject=subject, reply=reply, data=data))
