@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-import holder_pb2
+import holder_pb2 as Holder
 import sys
 from faker import Faker
 
@@ -30,8 +30,8 @@ class ReadCardHolder:
 
 if __name__ == "__main__":
     write_card_holder = WriteCardHolder()
-    card_holder = holder_pb2.CardHolder()
-    a = write_card_holder.PromptForAddress(card_holder.add())
+    card_holder = Holder.CardHolder()
+    a = write_card_holder.PromptForAddress(card_holder)
     serialize_a = a.SerializeToString()
     read_card_holder = ReadCardHolder()
     read_card_holder.card_holder.ParseFromString(serialize_a)
