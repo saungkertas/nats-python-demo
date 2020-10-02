@@ -31,4 +31,4 @@ if __name__ == "__main__":
         a = write_card_holder.PromptForAddress(card_holder_book)
         f.write(a.SerializeToString())
         f.write(b';')
-        f.close()   
+    f.close()   
