@@ -68,7 +68,7 @@ async def run(loop):
     #         await nc.publish(args.subject, line.encode())
 
     write_card_holder = WriteCardHolder()
-    card_holder_book = holder_pb2.CardHolderBook()
+    card_holder_book = holder_pb2.CardHolder()
     for x in range(1):
         a = write_card_holder.PromptForAddress(card_holder_book.card_holders.add())
         await nc.publish(args.subject, a.SerializeToString())

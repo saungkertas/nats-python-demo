@@ -133,12 +133,12 @@ CardHolder = _reflection.GeneratedProtocolMessageType('CardHolder', (_message.Me
   ))
 _sym_db.RegisterMessage(CardHolder)
 
-CardHolderBook = _reflection.GeneratedProtocolMessageType('CardHolderBook', (_message.Message,), dict(
+CardHolder = _reflection.GeneratedProtocolMessageType('CardHolderBook', (_message.Message,), dict(
   DESCRIPTOR = _CARDHOLDERBOOK,
   __module__ = 'holder.protoc_pb2'
   # @@protoc_insertion_point(class_scope:holder.CardHolderBook)
   ))
-_sym_db.RegisterMessage(CardHolderBook)
+_sym_db.RegisterMessage(CardHolder)
 
 
 # @@protoc_insertion_point(module_scope)

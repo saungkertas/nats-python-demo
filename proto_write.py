@@ -18,7 +18,7 @@ class WriteCardHolder:
 
 if __name__ == "__main__":
     write_card_holder = WriteCardHolder()
-    card_holder_book = holder_pb2.CardHolderBook()
+    card_holder_book = holder_pb2.CardHolder()
     # Add an address.
     
     f = open("records.txt", "wb")

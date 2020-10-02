@@ -6,7 +6,7 @@ import sys
 # Iterates though all people in the AddressBook and prints info about them.
 class ReadCardHolder:
     def __init__(self):
-        self.card_holder_book = holder_pb2.CardHolderBook()
+        self.card_holder_book = holder_pb2.CardHolder()
 
     def ListPeople(self):
         for card_holder in self.card_holder_book.card_holders:
