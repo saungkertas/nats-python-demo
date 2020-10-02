@@ -18,13 +18,16 @@ class ReadCardHolder:
     
 if __name__ == "__main__":
     read_card_holder = ReadCardHolder()
-    # f = open("records.txt", "rb")
-    # a = f.read()
-    # read_card_holder.card_holder.ParseFromString(a)
-    # read_card_holder.ListPeople()
+    f = open("records.txt", "rb")
+    a = f.read()
+    print(a)
+    read_card_holder.card_holder.ParseFromString(a)
+    read_card_holder.ListPeople()
+    print('============')
     f = open("records2.txt", "rb")
     a = f.read()
     b = a.split(b';')
     for c in b:
-        read_card_holder.card_holder.ParseFromString(a)
+        print(c)
+        read_card_holder.card_holder.ParseFromString(c)
         read_card_holder.ListPeople()
