@@ -21,7 +21,14 @@ if __name__ == "__main__":
     card_holder_book = holder_pb2.CardHolder()
     # Add an address.
     
-    f = open("records.txt", "wb")
-    a = write_card_holder.PromptForAddress(card_holder_book)
-    f.write(a.SerializeToString())
-    f.close()   
+    # f = open("records.txt", "wb")
+    # a = write_card_holder.PromptForAddress(card_holder_book)
+    # f.write(a.SerializeToString())
+    # f.close()  
+
+    f = open("records2.txt", "ab")
+    for x in range(10):
+        a = write_card_holder.PromptForAddress(card_holder_book)
+        f.write(a.SerializeToString())
+        f.write(b';')
+        f.close()   
