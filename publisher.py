@@ -10,7 +10,7 @@ def show_usage():
     usage = """
 nats-pub SUBJECT [-d DATA] [-s SERVER]
 Example:
-python3 pub.py telegraf -d world -s nats://127.0.0.1:4222
+python3 publisher.py telegraf -s nats://127.0.0.1:4222
 """
     print(usage)
 
