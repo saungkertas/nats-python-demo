@@ -3,7 +3,6 @@ import os
 import signal
 from proto_read import ReadCardHolder
 from nats.aio.client import Client as NATS
-import cloudstorage as gcs
 from datetime import datetime
 import constant
 
