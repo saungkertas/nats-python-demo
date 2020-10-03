@@ -48,7 +48,9 @@ async def run(loop):
     for sig in ('SIGINT', 'SIGTERM'):
         loop.add_signal_handler(getattr(signal, sig), signal_handler)
 
-def sink_to_bq(table_id, rows_to_insert):
+def sink_to_bq(table_id, row_to_insert):
+    rows_to_insert = []
+    rows_to_insert.append(row_to_insert)
     errors = client.insert_rows_json(table_id, rows_to_insert)  # Make an API request.
     if errors == []:
         print("New rows have been added.")
