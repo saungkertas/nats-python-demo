@@ -15,6 +15,17 @@ class ReadCardHolder:
         print("Address:", self.card_holder.address)
         print("Card Number:", self.card_holder.card_number)
         print("Card Provider:", self.card_holder.card_provider)
+
+    def GetRowToInsert(self):
+        row_to_insert = {
+            "name": self.card_holder.name,
+            "job": self.card_holder.job,
+            "phone_number": self.card_holder.phone_number,
+            "address": self.card_holder.address,
+            "card_number": self.card_holder.card_number,
+            "card_provider": self.card_holder.card_provider
+        }
+        return row_to_insert
     
 if __name__ == "__main__":
     read_card_holder = ReadCardHolder()
