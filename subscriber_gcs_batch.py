@@ -36,7 +36,7 @@ async def run(loop):
 
         filename = datetime.today().strftime('%Y%m%d_%H%M')
         f = open('tmp/'+filename, 'a')
-        f.write(row_to_insert)
+        f.write(json.dumps(row_to_insert))
         f.close()
 
     # Basic subscription to receive all published messages
