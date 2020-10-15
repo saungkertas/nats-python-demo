@@ -52,62 +52,54 @@ sudo service influxdb start
 sudo service telegraf start
 chronograf
 
+sudo docker run -p 4222:4222 nats:latest 
+
+
+
+=====howto===
+=====nats-introduction====
 docker run -p 4222:4222 nats:latest 
-influx -precision rfc3339
 
-=====
-influx_nats.conf
+=====nats+local=====
+masuk ke /home/hadoop/nats.py/examples/nats-sub
+python3 __main__.py hello -q workers -s nats://127.0.0.1:4222
+/home/hadoop/nats.py/examples/nats-pub
+python3 __main__.py hello -d "abcadfsdfadfsd" -s nats://127.0.0.1:4222
 
-[[inputs.nats_consumer]]
-  ## urls of NATS servers
-  servers = ["nats://localhost:4222"]
+=====nats_interlokal=====
+try to run another server with different queue
+python3 __main__.py warpin<queue> -d "abcadfsdfadfsd" -s nats://159.89.28.145:4222
+try to using generator
 
-  ## subject(s) to consume
-  subjects = ["telegraf"]
+try to using same queue
+python3 __main__.py warpin<queue> -d "abcadfsdfadfsd" -s nats://159.89.28.145:4222
+acak with generator
 
-  ## name a queue group
-  queue_group = "telegraf_consumers"
 
-  ## Optional credentials
-  # username = ""
-  # password = ""
+now back using different queue
 
-  ## Optional NATS 2.0 and NATS NGS compatible user credentials
-  # credentials = "/etc/telegraf/nats.creds"
+====proto_demo====
+mkdir proto_demo
+nano proto_write.py
+nano proto_read.py
 
-  ## Use Transport Layer Security
-  # secure = false
+=====publisher_demo=====
+nano publisher.py
+python3 publisher.py warpin -s nats://159.89.28.145:4222
 
-  ## Optional TLS Config
-  # tls_ca = "/etc/telegraf/ca.pem"
-  # tls_cert = "/etc/telegraf/cert.pem"
-  # tls_key = "/etc/telegraf/key.pem"
-  ## Use TLS but skip chain & host verification
-  # insecure_skip_verify = false
+=====gcs_batch====
+[optional] apt-get install gsutil (https://cloud.google.com/storage/docs/gsutil_install#deb)
+nano subscriber_gcs_batch.py
+python3 subscriber_gcs_batch.py warpin -q warpin_q -s nats://159.89.28.145:4222
+nano mv_to_gcs.sh
+./mv_to_gcs.sh tmp gs://warpin-stream-demo-01/holder
+bq mk --external_table_definition=card_provider:STRING,name:STRING,card_number:STRING,job:STRING,address:STRING,phone_number:STRING@NEWLINE_DELIMITED_JSON=gs://warpin-stream-demo-01/holder/* wpdemo.card_holder_external
 
-  ## Sets the limits for pending msgs and bytes for each subscription
-  ## These shouldn't need to be adjusted except in very high throughput scenarios
-  # pending_message_limit = 65536
-  # pending_bytes_limit = 67108864
+=====bq_streaming====
+python3 subscriber_bq_streaming.py warpin -q warpin_q -t charged-ridge-279113.wpdemo.card_holder -s nats://159.89.28.145:4222
 
-  ## Maximum messages to read from the broker that have not been written by an
-  ## output.  For best throughput set based on the number of metrics within
-  ## each message and the size of the output's metric_batch_size.
-  ##
-  ## For example, if each message from the queue contains 10 metrics and the
-  ## output metric_batch_size is 1000, setting this to 100 will ensure that a
-  ## full batch is collected and the write is triggered immediately without
-  ## waiting until the next flush_interval.
-  # max_undelivered_messages = 1000
 
-  ## Data format to consume.
-  ## Each data format has its own unique set of configuration options, read
-  ## more about them here:
-  ## https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md
-  data_format = "influx"
-  
-  
-==== protoc
-
-apt install -y protobuf-compiler
-protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/holder.proto
+=====pubsub====
+create pubsub with nats topic
+nano gcp_pubsub
+python3 gcp_pubsub.py subject_name -q warpin_q -t projects/charged-ridge-279113/topics/nats -s nats://159.89.28.145:4222
