@@ -61,12 +61,7 @@ async def run(loop):
 
     print(f"Connected to NATS at {nc.connected_url.netloc}...")
     
-    # filepath = args.file
-    # with open(filepath) as fp:
-    #     for id, line in enumerate(fp):  
-    #         await nc.publish(args.subject, line.encode())
-
-    f = open("records2.txt", "rb")
+    f = open("records.txt", "rb")
     a = f.read()
     b = a.split(b';')
     for c in b:
