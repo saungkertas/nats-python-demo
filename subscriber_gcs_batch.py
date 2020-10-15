@@ -38,7 +38,7 @@ async def run(loop):
 
         filename = datetime.today().strftime('%Y%m%d_%H%M')
         f = open('tmp/'+filename, 'a')
-        f.write(json.dumps(row_to_insert))
+        f.write(json.dumps(row_to_insert)+'\n')
         f.close()
 
     # Basic subscription to receive all published messages
@@ -59,16 +59,16 @@ async def run(loop):
         loop.add_signal_handler(getattr(signal, sig), signal_handler)
 
 
-def create_file(self, filename, rows_to_insert):
-    write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-    gcs_file = gcs.open(filename,
-                        'w',
-                        content_type='text/plain',
-                        retry_params=write_retry_params)
-    gcs_file.write('abcde\n')
-    gcs_file.write('f'*1024*4 + '\n')
-    gcs_file.close()
-    self.tmp_filenames_to_clean_up.append(filename)
+# def create_file(self, filename, rows_to_insert):
+#     write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+#     gcs_file = gcs.open(filename,
+#                         'w',
+#                         content_type='text/plain',
+#                         retry_params=write_retry_params)
+#     gcs_file.write('abcde\n')
+#     gcs_file.write('f'*1024*4 + '\n')
+#     gcs_file.close()
+#     self.tmp_filenames_to_clean_up.append(filename)
 
 
 if __name__ == '__main__':
