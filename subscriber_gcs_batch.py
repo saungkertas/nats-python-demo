@@ -1,10 +1,11 @@
+import argparse, sys
 import asyncio
 import os
 import signal
 from proto_read import ReadCardHolder
 from nats.aio.client import Client as NATS
 from datetime import datetime
-import constant
+#import constant
 import json
 
 
@@ -20,7 +21,7 @@ async def run(loop):
     # To avoid this, start your own locally and modify the example to use it.
     options = {
         # 'servers': ['nats://127.0.0.1:4222'],
-        'servers': 'localhost:4222',
+        'servers': args.servers,
         'loop': loop,
         'closed_cb': closed_cb
     }
@@ -42,11 +43,11 @@ async def run(loop):
 
     # Basic subscription to receive all published messages
     # which are being sent to a single topic 'discover'
-    await nc.subscribe('telegraf', cb=subscribe_handler)
+    await nc.subscribe(args.subject, cb=subscribe_handler)
 
     # Subscription on queue named 'workers' so that
     # one subscriber handles message a request at a time.
-    await nc.subscribe('telegraf.*', 'workers', subscribe_handler)
+    await nc.subscribe(args.subject, args.queue, subscribe_handler)
 
     def signal_handler():
         if nc.is_closed:
@@ -71,6 +72,15 @@ def create_file(self, filename, rows_to_insert):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    # e.g python3 subscriber_gcs_batch.py subject_name -q queue_name -s nats://159.89.28.145:4222
+    parser.add_argument('subject', default='hello', nargs='?')
+    parser.add_argument('-s', '--servers', default=[], action='append')
+    parser.add_argument('-q', '--queue', default="")
+    parser.add_argument('--creds', default="")
+    args = parser.parse_args()
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run(loop))
     try:
