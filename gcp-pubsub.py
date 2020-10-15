@@ -64,7 +64,7 @@ def sink_to_bq(table_id, row_to_insert):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    # e.g python3 subscriber_bq_streaming.py subject_name -q queue_name -t projects/charged-ridge-279113/topics/nats -s nats://159.89.28.145:4222
+    # e.g python3 gcp_pubsub.py subject_name -q queue_name -t projects/charged-ridge-279113/topics/nats -s nats://159.89.28.145:4222
     parser.add_argument('subject', default='hello', nargs='?')
     parser.add_argument('-s', '--servers', default=[], action='append')
     parser.add_argument('-q', '--queue', default="")
