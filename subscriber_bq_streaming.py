@@ -1,7 +1,7 @@
 import asyncio
 import os
 import signal
-import constant
+import argparse, sys
 from proto_read import ReadCardHolder
 from nats.aio.client import Client as NATS
 from google.cloud import bigquery
@@ -18,7 +18,7 @@ async def run(loop):
     # It is very likely that the demo server will see traffic from clients other than yours.
     # To avoid this, start your own locally and modify the example to use it.
     options = {
-        "servers": "localhost:4222",
+        "servers": args.servers,
         "loop": loop,
         "closed_cb": closed_cb
     }
@@ -31,13 +31,13 @@ async def run(loop):
         read_card_holder = ReadCardHolder()
         read_card_holder.card_holder.ParseFromString(data)
         row_to_insert = read_card_holder.GetRowToInsert()
-        sink_to_bq(constant.TABLE_ID,row_to_insert)
+        sink_to_bq(args.table,row_to_insert)
 
-    await nc.subscribe("telegraf", cb=subscribe_handler)
+    await nc.subscribe(args.subject, cb=subscribe_handler)
 
     # Subscription on queue named 'workers' so that
     # one subscriber handles message a request at a time.
-    await nc.subscribe("telegraf.*", "workers", subscribe_handler)
+    await nc.subscribe(args.subject, args.queue, subscribe_handler)
 
     def signal_handler():
         if nc.is_closed:
@@ -58,6 +58,15 @@ def sink_to_bq(table_id, row_to_insert):
         print("Encountered errors while inserting rows: {}".format(errors))
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    # e.g python3 subscriber_bq_streaming.py subject_name -q queue_name -s nats://159.89.28.145:4222
+    parser.add_argument('subject', default='hello', nargs='?')
+    parser.add_argument('-s', '--servers', default=[], action='append')
+    parser.add_argument('-q', '--queue', default="")
+    parser.add_argument('-t', '--table', default="")
+    parser.add_argument('--creds', default="")
+    args = parser.parse_args()
     client = bigquery.Client()
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run(loop))
