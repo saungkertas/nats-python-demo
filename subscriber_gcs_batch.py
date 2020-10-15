@@ -5,7 +5,6 @@ import signal
 from proto_read import ReadCardHolder
 from nats.aio.client import Client as NATS
 from datetime import datetime
-#import constant
 import json
 
 
@@ -57,19 +56,6 @@ async def run(loop):
 
     for sig in ('SIGINT', 'SIGTERM'):
         loop.add_signal_handler(getattr(signal, sig), signal_handler)
-
-
-# def create_file(self, filename, rows_to_insert):
-#     write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-#     gcs_file = gcs.open(filename,
-#                         'w',
-#                         content_type='text/plain',
-#                         retry_params=write_retry_params)
-#     gcs_file.write('abcde\n')
-#     gcs_file.write('f'*1024*4 + '\n')
-#     gcs_file.close()
-#     self.tmp_filenames_to_clean_up.append(filename)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
