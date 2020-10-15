@@ -1,75 +1,79 @@
-#!/usr/bin/python3
+import json
 from google.cloud import pubsub_v1
 import asyncio
-import requests
-import json
+import os
+import signal
+import argparse, sys
+from proto_read import ReadCardHolder
 from nats.aio.client import Client as NATS
-from nats.aio.errors import ErrConnectionClosed, ErrTimeout, ErrNoServers
+
 
 async def run(loop):
     publisher = pubsub_v1.PublisherClient()
     topic_name = 'projects/charged-ridge-279113/topics/nats'
     nc = NATS()
-	
+
+    async def closed_cb():
+        print("Connection to NATS is closed.")
+        await asyncio.sleep(0.1, loop=loop)
+        loop.stop()
+
     # It is very likely that the demo server will see traffic from clients other than yours.
     # To avoid this, start your own locally and modify the example to use it.
-    # await nc.connect("nats://127.0.0.1:4222", loop=loop)
-    await nc.connect("10.148.0.5:4222", loop=loop)
-
-    async def message_handler(msg):
-        subject = msg.subject
-        reply = msg.reply
-        data = msg.data.decode()
-        publisher.publish(topic_name, msg.data)
-        print(data)
-
-    # Simple publisher and async subscriber via coroutine.
-    sid = await nc.subscribe("telegraf_stdout", cb=message_handler)
-    a = {
-    "record_date": "2020-05-01",
-    "daily_confirmed_cases": 347,
-    "daily_deaths": 8,
-    "confirmed_cases": 10118,
-    "deaths": 792,
-    "countries_and_territories": "Indonesia",
-    "geo_id": "ID",
-    "pop_data_2019": 270625567
+    options = {
+        "servers": args.servers,
+        "loop": loop,
+        "closed_cb": closed_cb
     }
-    # Stop receiving after 2 messages.
-    #await nc.auto_unsubscribe(sid, 3)
-    while True:
-        await nc.publish("telegraf_stdout", str.encode(json.dumps(a)))
-		#await nc.publish("telegraf_stdout", str.encode(b))
-        #await nc.publish("telegraf", b'telegraf_test,host=server05,region=asia-east value=0.8')
-        #await nc.publish("telegraf", b'telegraf_test,host=server05,region=asia-east value=0.7')
 
-    async def help_request(msg):
-        subject = msg.subject
-        reply = msg.reply
-        data = msg.data.decode()
-        print(data)
-        #await nc.publish(reply, b'I can help')
+    await nc.connect(**options)
+    print(f"Connected to NATS at {nc.connected_url.netloc}...")
 
-    # Use queue named 'workers' for distributing requests
-    # among subscribers.
-    sid = await nc.subscribe("help", "workers", help_request)
+    async def subscribe_handler(msg):
+        data = msg.data
+        read_card_holder = ReadCardHolder()
+        read_card_holder.card_holder.ParseFromString(data)
+        row_to_insert = read_card_holder.GetRowToInsert()
+        pubsub_msg = json.dumps(row_to_insert).encode()
+        publisher.publish(topic_name, pubsub_msg)
+       
+    await nc.subscribe(args.subject, cb=subscribe_handler)
 
-    # Send a request and expect a single response
-    # and trigger timeout if not faster than 500 ms.
-    try:
-        response = await nc.request("help", b'help me', 0.5)
-        print("Received response: {message}".format(
-            message=response.data.decode()))
-    except ErrTimeout:
-        print("Request timed out")
+    # Subscription on queue named 'workers' so that
+    # one subscriber handles message a request at a time.
+    await nc.subscribe(args.subject, args.queue, subscribe_handler)
 
-    # Remove interest in subscription.
-    await nc.unsubscribe(sid)
+    def signal_handler():
+        if nc.is_closed:
+            return
+        print("Disconnecting...")
+        loop.create_task(nc.close())
 
-    # Terminate connection to NATS.
-    await nc.close()
-	
+    for sig in ('SIGINT', 'SIGTERM'):
+        loop.add_signal_handler(getattr(signal, sig), signal_handler)
+
+def sink_to_bq(table_id, row_to_insert):
+    rows_to_insert = []
+    rows_to_insert.append(row_to_insert)
+    errors = client.insert_rows_json(table_id, rows_to_insert)  # Make an API request.
+    if errors == []:
+        print("New rows have been added.")
+    else:
+        print("Encountered errors while inserting rows: {}".format(errors))
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    # e.g python3 subscriber_bq_streaming.py subject_name -q queue_name -t project_id.schema.table_name -s nats://159.89.28.145:4222
+    parser.add_argument('subject', default='hello', nargs='?')
+    parser.add_argument('-s', '--servers', default=[], action='append')
+    parser.add_argument('-q', '--queue', default="")
+    parser.add_argument('-t', '--table', default="")
+    parser.add_argument('--creds', default="")
+    args = parser.parse_args()
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run(loop))
-    loop.close()
+    try:
+        loop.run_forever()
+    finally:
+        loop.close()
