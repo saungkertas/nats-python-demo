@@ -10,7 +10,7 @@ from nats.aio.client import Client as NATS
 
 async def run(loop):
     publisher = pubsub_v1.PublisherClient()
-    topic_name = 'projects/charged-ridge-279113/topics/nats'
+    topic_name = args.topic
     nc = NATS()
 
     async def closed_cb():
@@ -64,11 +64,11 @@ def sink_to_bq(table_id, row_to_insert):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    # e.g python3 subscriber_bq_streaming.py subject_name -q queue_name -t project_id.schema.table_name -s nats://159.89.28.145:4222
+    # e.g python3 subscriber_bq_streaming.py subject_name -q queue_name -t projects/charged-ridge-279113/topics/nats -s nats://159.89.28.145:4222
     parser.add_argument('subject', default='hello', nargs='?')
     parser.add_argument('-s', '--servers', default=[], action='append')
     parser.add_argument('-q', '--queue', default="")
-    parser.add_argument('-t', '--table', default="")
+    parser.add_argument('-t', '--topic', default="")
     parser.add_argument('--creds', default="")
     args = parser.parse_args()
     loop = asyncio.get_event_loop()
