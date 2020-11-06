@@ -9,6 +9,8 @@ docker pull nats-streaming
 ### Proto demo
 - proto_write.py
 - proto_read.py
+- holder.proto
+- holder_pb2.py
 
 ### Publisher demo
 - publisher.py
